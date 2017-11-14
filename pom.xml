@@ -10,6 +10,7 @@
     <modules>
         <module>kafka-sample</module>
         <module>kafka-spring</module>
+        <module>kafka-stream</module>
     </modules>
     <packaging>pom</packaging>
 
