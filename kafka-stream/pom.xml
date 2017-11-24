@@ -20,4 +20,8 @@
 
     </dependencies>
 
+    <build>
+        <finalName>zlikun-stream-sample</finalName>
+    </build>
+
 </project>
