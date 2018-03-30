@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>kafka</artifactId>
-        <groupId>com.zlikun.learning</groupId>
+        <groupId>com.zlikun.hadoop</groupId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>kafka-sample</artifactId>
+    <artifactId>kafka-usage</artifactId>
 
     <dependencies>
 
