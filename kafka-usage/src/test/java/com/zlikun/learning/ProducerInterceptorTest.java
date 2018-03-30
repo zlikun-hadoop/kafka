@@ -21,7 +21,7 @@ public class ProducerInterceptorTest {
 
     Producer<String, String> producer = null;
     String servers = "192.168.120.74:9092" ;
-    String topic = "my-replicated-topic" ;
+    String topic = "my-replicated-TOPIC" ;
 
     @Before
     public void init() {
@@ -53,7 +53,7 @@ public class ProducerInterceptorTest {
 
         @Override
         public ProducerRecord onSend(ProducerRecord record) {
-            log.info("producer interceptor - onSend : { key : {} ,value : {} ,topic : {} }" ,record.key() ,record.value() ,record.topic());
+            log.info("producer interceptor - onSend : { key : {} ,value : {} ,TOPIC : {} }" ,record.key() ,record.value() ,record.topic());
             return record;
         }
 

@@ -20,7 +20,7 @@ public class ConsumerRebalanceListenerTest {
 
     KafkaConsumer<String, String> consumer ;
     String servers = "192.168.120.74:9092" ;
-    String topic = "my-replicated-topic" ;
+    String topic = "my-replicated-TOPIC" ;
 
     @Before
     public void init() {

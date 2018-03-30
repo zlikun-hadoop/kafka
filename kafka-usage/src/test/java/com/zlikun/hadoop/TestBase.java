@@ -19,10 +19,11 @@ import java.util.Properties;
  */
 public abstract class TestBase {
 
-    static String servers = "kafka.zlikun.com:9092";
-    static Producer<String, String> producer = null;
+    public static String SERVERS = "kafka.zlikun.com:9092";
+    public static String TOPIC = "logs";
+
+    static Producer<String, String> producer;
     static KafkaConsumer<String, String> consumer;
-    static String topic = "logs";
 
     @BeforeClass
     public static final void init() {
@@ -39,7 +40,7 @@ public abstract class TestBase {
     private static final void initProducer() {
         Properties props = new Properties();
         // Kafka 服务端的主机名及端口号
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
         props.put(ProducerConfig.ACKS_CONFIG, "all");
         props.put(ProducerConfig.RETRIES_CONFIG, 0);
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
@@ -59,7 +60,7 @@ public abstract class TestBase {
      */
     private static final void initConsumer() {
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "user");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
         props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");

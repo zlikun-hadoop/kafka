@@ -19,17 +19,17 @@ public class KafkaConsumerTest extends TestBase {
     public void consume() {
 
         // 订阅Topic
-        consumer.subscribe(Arrays.asList(topic));
+        consumer.subscribe(Arrays.asList(TOPIC));
 
         // 这里仅供测试，持续10秒
         for (int i = 0; i < 50; i++) {
             // 从 Topic 拉取消息，每次拉取可以是多条
             ConsumerRecords<String, String> records = consumer.poll(200);
             for (ConsumerRecord<String, String> record : records) {
-                // topic = logs, timestamp = 1522404498736, partition = 0, offset = 14, key = null, value = hello
-                // topic = logs, timestamp = 1522404503372, partition = 0, offset = 15, key = null, value = kafka
-                // topic = logs, timestamp = 1522404560593, partition = 0, offset = 17, key = 00001, value = U_00001
-                log.info("{} => topic = {}, timestamp = {}, partition = {}, offset = {}, key = {}, value = {}",
+                // TOPIC = logs, timestamp = 1522404498736, partition = 0, offset = 14, key = null, value = hello
+                // TOPIC = logs, timestamp = 1522404503372, partition = 0, offset = 15, key = null, value = kafka
+                // TOPIC = logs, timestamp = 1522404560593, partition = 0, offset = 17, key = 00001, value = U_00001
+                log.info("{} => TOPIC = {}, timestamp = {}, partition = {}, offset = {}, key = {}, value = {}",
                         i,
                         record.topic(),
                         record.timestamp(),
