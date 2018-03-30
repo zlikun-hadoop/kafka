@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
  * @date 2018-03-30 17:29
  */
 @Slf4j
-public class KafkaProducerTest extends TestBase {
+public class ProducerTest extends TestBase {
 
     /**
      * 同步发送消息
@@ -30,10 +30,10 @@ public class KafkaProducerTest extends TestBase {
 
         // 获取执行结果(下面是执行三次后的结果)
         RecordMetadata metadata = future.get();
-        // TOPIC = logs, timestamp = 1522403228662, partition = 0, offset = 3
-        // TOPIC = logs, timestamp = 1522403270441, partition = 0, offset = 4
-        // TOPIC = logs, timestamp = 1522403300083, partition = 0, offset = 5
-        log.info("0 : TOPIC = {}, timestamp = {}, partition = {}, offset = {}",
+        // topic = logs, timestamp = 1522403228662, partition = 0, offset = 3
+        // topic = logs, timestamp = 1522403270441, partition = 0, offset = 4
+        // topic = logs, timestamp = 1522403300083, partition = 0, offset = 5
+        log.info("0 : topic = {}, timestamp = {}, partition = {}, offset = {}",
                 metadata.topic(),
                 metadata.timestamp(),
                 metadata.partition(),

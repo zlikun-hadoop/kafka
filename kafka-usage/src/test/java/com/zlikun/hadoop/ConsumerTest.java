@@ -13,7 +13,7 @@ import java.util.Arrays;
  * @date 2018-03-30 17:56
  */
 @Slf4j
-public class KafkaConsumerTest extends TestBase {
+public class ConsumerTest extends TestBase {
 
     @Test
     public void consume() {
