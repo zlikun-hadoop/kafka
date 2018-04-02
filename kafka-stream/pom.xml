@@ -18,13 +18,6 @@
             <artifactId>kafka-streams</artifactId>
         </dependency>
 
-        <!-- 仅用于研读代码用 -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>streams-quickstart-java</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

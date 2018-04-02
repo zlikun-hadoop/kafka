@@ -28,21 +28,23 @@ Topic:streams-wordcount-output	PartitionCount:1	ReplicationFactor:1	Configs:
 
 #### 运行应用
 ```
-# 上传 zlikun-stream-sample.jar 到kafka/libs/目录下
-$ sudo bin/kafka-run-class.sh com.zlikun.learning.WordCountApplication
+# 上传 zlikun-kafka-stream.jar 到kafka/libs/目录下
+$ sudo bin/kafka-run-class.sh com.zlikun.hadoop.WordCount
+
+# 测试测试，在IDE上直接运行程序也是可以的
 ```
 
 #### 启动Producer
 ```
 # 此处理输入语句，消费端将持续输出统计单词数
-$ sudo bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streams-plaintext-input
+$ sudo bin/kafka-console-producer.sh --broker-list localhost:9092 --topic topic-wc-streams
 ```
 
 #### 启动Consumer
 ```
 # 注意统计数字会一直累加
 $ sudo bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
-    --topic streams-wordcount-output \
+    --topic topic-wc-counts \
     --from-beginning \
     --formatter kafka.tools.DefaultMessageFormatter \
     --property print.key=true \
@@ -51,5 +53,15 @@ $ sudo bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
     --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
 ```
 
-#### 其它
-> 忽略单元测试下的生产消费代码，实际无法正常使用 !
+#### 测试应用
+```
+# 生产者命令行下输入：
+hello kafka
+hello apache
+
+# 命令行会得到输出：
+hello 1
+kafka 1
+hello 2
+apache 1
+```
