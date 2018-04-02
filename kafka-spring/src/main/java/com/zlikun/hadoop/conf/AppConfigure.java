@@ -1,6 +1,8 @@
 package com.zlikun.hadoop.conf;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -12,6 +14,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.AbstractMessageListenerContainer;
 import org.springframework.kafka.listener.config.ContainerProperties;
@@ -37,6 +40,7 @@ public class AppConfigure {
 
     /**
      * 配置消费容器实例
+     *
      * @return
      */
     @Bean
@@ -66,6 +70,7 @@ public class AppConfigure {
 
     /**
      * 配置Kafka发送模板实例
+     *
      * @return
      */
     @Bean
@@ -95,6 +100,24 @@ public class AppConfigure {
             }
         });
         return template;
+    }
+
+    /**
+     * 管理Kafka
+     * https://docs.spring.io/spring-kafka/reference/htmlsingle/#_configuring_topics
+     *
+     * @return
+     */
+    @Bean
+    public KafkaAdmin kafkaAdmin() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
+        return new KafkaAdmin(config);
+    }
+
+    @Bean(destroyMethod = "close")
+    public AdminClient adminClient() {
+        return AdminClient.create(kafkaAdmin().getConfig());
     }
 
 }
