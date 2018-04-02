@@ -29,7 +29,7 @@ public class ConsumerTest extends TestBase {
                 // TOPIC = logs, timestamp = 1522404498736, partition = 0, offset = 14, key = null, value = hello
                 // TOPIC = logs, timestamp = 1522404503372, partition = 0, offset = 15, key = null, value = kafka
                 // TOPIC = logs, timestamp = 1522404560593, partition = 0, offset = 17, key = 00001, value = U_00001
-                log.info("{} => TOPIC = {}, timestamp = {}, partition = {}, offset = {}, key = {}, value = {}",
+                log.info("{} => topic = {}, timestamp = {}, partition = {}, offset = {}, key = {}, value = {}",
                         i,
                         record.topic(),
                         record.timestamp(),
