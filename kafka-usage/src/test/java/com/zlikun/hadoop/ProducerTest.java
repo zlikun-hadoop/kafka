@@ -53,9 +53,9 @@ public class ProducerTest extends TestBase {
         Future<RecordMetadata> future = producer.send(
                 new ProducerRecord<String, String>(TOPIC, "00002", "U_00002"),
                 (metadata, ex) -> {
-                    // TOPIC = logs, timestamp = 1522403633966, partition = 0, offset = 11
-                    // TOPIC = logs, timestamp = 1522403722898, partition = 0, offset = 13
-                    log.info("1 : TOPIC = {}, timestamp = {}, partition = {}, offset = {}",
+                    // topic = logs, timestamp = 1522403633966, partition = 0, offset = 11
+                    // topic = logs, timestamp = 1522403722898, partition = 0, offset = 13
+                    log.info("---> topic = {}, timestamp = {}, partition = {}, offset = {}",
                             metadata.topic(),
                             metadata.timestamp(),
                             metadata.partition(),
@@ -65,9 +65,9 @@ public class ProducerTest extends TestBase {
 
         // 获取执行结果，与回调函数中取得的信息一致
         RecordMetadata metadata = future.get();
-        // TOPIC = logs, timestamp = 1522403633966, partition = 0, offset = 11
-        // TOPIC = logs, timestamp = 1522403722898, partition = 0, offset = 13
-        log.info("2 : TOPIC = {}, timestamp = {}, partition = {}, offset = {}",
+        // topic = logs, timestamp = 1522403633966, partition = 0, offset = 11
+        // topic = logs, timestamp = 1522403722898, partition = 0, offset = 13
+        log.info("===> topic = {}, timestamp = {}, partition = {}, offset = {}",
                 metadata.topic(),
                 metadata.timestamp(),
                 metadata.partition(),
