@@ -1,4 +1,4 @@
-package com.zlikun.learning.configure;
+package com.zlikun.hadoop.configure;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -19,15 +19,15 @@ import java.util.concurrent.CountDownLatch;
 
 /**
  * @author zlikun <zlikun-dev@hotmail.com>
- * @date 2017-11-14 18:58
+ * @date 2018-04-02 15:00
  */
 @Configuration
 @EnableKafka
 public class AppConfigure {
 
-    static final String servers = "192.168.120.74:9092" ;
-    static final String topic = "my-replicated-topic" ;
-    static final String group = "test" ;
+    static final String servers = "kafka.zlikun.com:9092" ;
+    static final String topic = "logs" ;
+    static final String group = "user" ;
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<Integer ,String> kafkaListenerContainerFactory() {
