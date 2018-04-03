@@ -10,6 +10,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -43,7 +44,7 @@ public class AppConfigure {
      *
      * @return
      */
-    @Bean
+    @Bean @Primary
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
@@ -62,8 +63,35 @@ public class AppConfigure {
         ContainerProperties props = factory.getContainerProperties();
         props.setPollTimeout(1500);
         props.setGroupId(DEFAULT_GROUP);
-        props.setAckMode(AbstractMessageListenerContainer.AckMode.BATCH);
-        props.setAckCount(16);
+//        props.setAckMode(AbstractMessageListenerContainer.AckMode.BATCH);
+//        props.setAckCount(16);
+
+        return factory;
+    }
+
+    /**
+     * 批量消费
+     * @return
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String> batchKafkaListenerContainerFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, DEFAULT_GROUP);
+        config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        config.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100");
+        config.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+
+        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<String, String>(config));
+        factory.setConcurrency(3);
+        factory.setBatchListener(true);
+
+        ContainerProperties props = factory.getContainerProperties();
+        props.setPollTimeout(1500);
+        props.setGroupId(DEFAULT_GROUP);
 
         return factory;
     }
@@ -84,6 +112,7 @@ public class AppConfigure {
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         KafkaTemplate template = new KafkaTemplate<>(new DefaultKafkaProducerFactory<String, String>(config));
+
         template.setDefaultTopic(DEFAULT_TOPIC);
         // 非必要，仅供测试使用
         template.setProducerListener(new ProducerListenerAdapter() {
