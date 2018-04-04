@@ -12,6 +12,7 @@
     <modules>
         <module>kafka-usage</module>
         <module>kafka-stream</module>
+        <module>kafka-avro</module>
         <module>kafka-spring</module>
         <module>kafka-spring-stream</module>
     </modules>
