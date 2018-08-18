@@ -21,7 +21,6 @@ import java.util.Properties;
 public abstract class TestBase {
 
     public static String SERVERS = AppConstants.SERVERS;
-    public static String TOPIC = "logs";
 
     static Producer<String, String> producer;
     static KafkaConsumer<String, String> consumer;

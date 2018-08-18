@@ -3,7 +3,7 @@ package com.zlikun.hadoop;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author zlikun <zlikun-dev@hotmail.com>
@@ -11,6 +11,8 @@ import org.junit.Test;
  */
 @Slf4j
 public class AccumulatorTest extends TestBase {
+
+    private final String TOPIC = "kafka-example-serialize";
 
     @Test
     public void send() {

@@ -6,9 +6,9 @@ import com.zlikun.hadoop.serialization.UserSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.LongSerializer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Properties;
@@ -16,7 +16,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static com.zlikun.hadoop.TestBase.SERVERS;
-import static com.zlikun.hadoop.TestBase.TOPIC;
 
 /**
  * @author zlikun <zlikun-dev@hotmail.com>
@@ -25,10 +24,12 @@ import static com.zlikun.hadoop.TestBase.TOPIC;
 @Slf4j
 public class PartitionerTest {
 
-    Producer<Long, User> producer;
-    UserSerializer serializer ;
+    private final String TOPIC = "kafka-example-serialize";
 
-    @Before
+    private Producer<Long, User> producer;
+    private UserSerializer serializer ;
+
+    @BeforeEach
     public void init() {
         serializer = new UserSerializer();
 
@@ -47,7 +48,7 @@ public class PartitionerTest {
 
     }
 
-    @After
+    @AfterEach
     public void destroy() {
         producer.close();
     }

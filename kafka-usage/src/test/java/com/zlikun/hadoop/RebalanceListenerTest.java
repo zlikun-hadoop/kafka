@@ -5,18 +5,21 @@ import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.TopicPartition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * 消费者再平衡监听器测试
+ *
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018-03-30 19:50
  */
 @Slf4j
 public class RebalanceListenerTest extends TestBase {
+
+    private final String TOPIC = "kafka-example-serialize";
 
     @Test
     public void consume() {
