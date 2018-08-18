@@ -1,4 +1,4 @@
-package com.zlikun.hadoop;
+package com.zlikun.hadoop.serialization;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

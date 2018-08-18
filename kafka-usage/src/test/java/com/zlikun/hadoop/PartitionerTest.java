@@ -1,6 +1,7 @@
 package com.zlikun.hadoop;
 
 import com.zlikun.hadoop.partitioner.UserPartitioner;
+import com.zlikun.hadoop.serialization.User;
 import com.zlikun.hadoop.serialization.UserSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.*;

@@ -1,17 +1,20 @@
 package com.zlikun.hadoop.serialization;
 
-import com.zlikun.hadoop.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serializer;
 
-import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.util.Map;
 
 /**
- * 自定义序列化实现
- * @see org.apache.kafka.common.serialization.StringSerializer
+ * 自定义序列化实现，这里借助Externalizable序列化机制来实现（性能比直接使用Serializable要好一引起）
+ *
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018-03-30 18:35
+ * @see org.apache.kafka.common.serialization.StringSerializer
  */
 @Slf4j
 public class UserSerializer implements Serializer<User> {
@@ -23,28 +26,29 @@ public class UserSerializer implements Serializer<User> {
 
     @Override
     public byte[] serialize(String topic, User data) {
-        if (data == null || data.getId() == null) {
-            return new byte[0];
+        if (data != null && data.getId() != null) {
+            try (
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ) {
+                this.writeExternal(new ObjectOutputStream(baos), data, topic);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-        // 这里采取最简单的方法，将字段用英文逗号拼起来，组成一个字符串，再转换为字节数组，没有值的时候，使用"_"代替
-        StringBuilder builder = new StringBuilder();
-        builder.append(data.getId()).append(",")
-                .append(data.getName() != null ? data.getName() : "_").append(",")
-                .append(data.getBirthday() != null ? data.getBirthday().toEpochDay() : "_");
-
-        try {
-            return builder.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
         return new byte[0];
     }
 
     @Override
     public void close() {
         log.info("--close--");
+    }
+
+    private void writeExternal(ObjectOutput out, User data, String topic) throws IOException {
+        out.writeUTF(topic);
+        out.writeLong(data.getId());
+        out.writeUTF(data.getName());
+        out.writeObject(data.getBirthday());
     }
 
 }
