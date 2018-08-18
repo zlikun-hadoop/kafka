@@ -8,9 +8,9 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.LongSerializer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Properties;
@@ -27,7 +27,7 @@ public class ProducerTest extends TestBase {
 
     private static Producer<Long, User> producer;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
@@ -36,7 +36,7 @@ public class ProducerTest extends TestBase {
         producer = new KafkaProducer<>(props);
     }
 
-    @AfterClass
+    @AfterAll
     public static void destroy() {
         producer.close();
     }

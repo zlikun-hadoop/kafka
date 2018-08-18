@@ -3,9 +3,9 @@ package com.zlikun.hadoop;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.listener.MessageListener;
@@ -25,7 +25,7 @@ public class KafkaContainerTest extends TestBase {
     private String group = "user";
     private KafkaMessageListenerContainer container;
 
-    @Before
+    @BeforeEach
     public void init() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
@@ -48,7 +48,7 @@ public class KafkaContainerTest extends TestBase {
         container.setAutoStartup(true);
     }
 
-    @After
+    @AfterEach
     public void destroy() {
         container.stop(() -> {
             log.info("--stop--");

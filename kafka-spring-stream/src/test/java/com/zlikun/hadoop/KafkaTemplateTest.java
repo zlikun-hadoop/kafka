@@ -2,12 +2,12 @@ package com.zlikun.hadoop;
 
 import com.zlikun.hadoop.conf.AppConfigure;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.concurrent.ExecutionException;
 
@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
  * @date 2018-04-02 15:00
  */
 @Slf4j
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppConfigure.class)
 public class KafkaTemplateTest {
 

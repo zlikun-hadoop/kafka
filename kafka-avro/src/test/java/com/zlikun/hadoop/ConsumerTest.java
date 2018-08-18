@@ -7,9 +7,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.LongDeserializer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -24,7 +24,7 @@ public class ConsumerTest extends TestBase {
 
     private static KafkaConsumer<String, String> consumer;
 
-    @BeforeClass
+    @BeforeAll
     public static void initConsumer() {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
@@ -34,7 +34,7 @@ public class ConsumerTest extends TestBase {
         consumer = new KafkaConsumer<>(props);
     }
 
-    @AfterClass
+    @AfterAll
     public static void destroy() {
         consumer.close();
     }
