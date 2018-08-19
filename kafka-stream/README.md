@@ -42,7 +42,7 @@ $ sudo bin/kafka-console-producer.sh --broker-list localhost:9092 --topic topic-
 
 #### 启动Consumer
 ```
-# 注意统计数字会一直累加
+# 注意统计数字会一直累加（实际是每隔一段时间获取一次）
 $ sudo bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
     --topic topic-wc-counts \
     --from-beginning \
