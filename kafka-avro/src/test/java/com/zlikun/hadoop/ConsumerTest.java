@@ -16,6 +16,7 @@ import java.util.Properties;
 
 /**
  * 消息消费者API测试
+ *
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018-03-30 17:56
  */
