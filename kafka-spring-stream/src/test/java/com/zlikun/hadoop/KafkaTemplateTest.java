@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * 消息发送API测试，配合控制台消费命令确认发送结果
- * $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic-wc-counts --from-beginning
+ * $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic spring-topic-wc-counts --from-beginning
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018-04-02 15:00
  */

@@ -1,5 +1,6 @@
 package com.zlikun.hadoop.conf;
 
+import com.zlikun.hadoop.util.ExternalConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Serdes;
@@ -33,9 +34,9 @@ import java.util.Map;
 @EnableKafkaStreams
 public class AppConfigure {
 
-    public static final String SERVERS = "kafka.zlikun.com:9092";
-    public static final String INPUT_TOPIC = "topic-wc-streams";
-    public static final String OUTPUT_TOPIC = "topic-wc-counts";
+    public static final String SERVERS = ExternalConfigUtil.getString("bootstrap.servers");
+    public static final String INPUT_TOPIC = "spring-topic-wc-streams";
+    public static final String OUTPUT_TOPIC = "spring-topic-wc-counts";
 
     /**
      * KafkaStreamsDefaultConfiguration类会自动装配StreamsBuilderFactoryBean实例，但需要注入StreamsConfig实例
@@ -62,7 +63,7 @@ public class AppConfigure {
                 .count(Materialized.as("counts_store"))
                 .toStream()
                 .to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
-        stream.print(Printed.toSysOut());
+//        stream.print(Printed.toSysOut());
         return stream;
     }
 
@@ -77,7 +78,7 @@ public class AppConfigure {
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
         config.put(ProducerConfig.RETRIES_CONFIG, 0);
         config.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-        config.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        config.put(ProducerConfig.LINGER_MS_CONFIG, 0);
         config.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
