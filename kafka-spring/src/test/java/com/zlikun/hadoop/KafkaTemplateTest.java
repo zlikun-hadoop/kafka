@@ -1,18 +1,18 @@
 package com.zlikun.hadoop;
 
+import com.zlikun.hadoop.conf.AppConfigure;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import java.util.HashMap;
@@ -20,54 +20,45 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
- * 消息发送API测试，配合控制台消费命令确认发送结果
- * $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic logs --from-beginning
+ * 消息发送API测试，配合控制台消费命令确认发送结果 <br>
+ * $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic kafka-spring-logs --from-beginning <br>
+ * $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic kafka-spring-logs2 --from-beginning <br>
+ * <br>
+ * <a href="https://docs.spring.io/spring-kafka/reference/htmlsingle/#kafka-template"> https://docs.spring.io/spring-kafka/reference/htmlsingle/#kafka-template </a>
  *
- * https://docs.spring.io/spring-kafka/reference/htmlsingle/#kafka-template
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018-04-02 15:00
  */
 @Slf4j
-public class KafkaTemplateTest extends TestBase {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = AppConfigure.class)
+public class KafkaTemplateTest {
 
-    KafkaTemplate<String, String> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-    @BeforeEach
-    public void init() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
-        props.put(ProducerConfig.RETRIES_CONFIG, 0);
-        props.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
-        props.put(ProducerConfig.LINGER_MS_CONFIG, 1);
-        props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-
-        ProducerFactory<String, String> factory =
-                new DefaultKafkaProducerFactory<>(props);
-
-        kafkaTemplate = new KafkaTemplate<>(factory);
-    }
+    private String topic = "kafka-spring-logs2";
 
     @Test
-    public void produce() throws ExecutionException, InterruptedException {
+    public void send() throws ExecutionException, InterruptedException {
 
-        // 设置默认Topic，否则仅能使用明确指定Topic的API
-        kafkaTemplate.setDefaultTopic(topic);
-
-        ListenableFuture<SendResult<String, String>> future = null;
+        // 测试多种消息发送API
+        ListenableFuture<SendResult<String, String>> future;
         future = kafkaTemplate.send(topic, "nginx");
         future = kafkaTemplate.send(new GenericMessage("kafka"));
-        future = kafkaTemplate.send(new ProducerRecord<String, String>(topic, "name", "zlikun"));
+        future = kafkaTemplate.send(new ProducerRecord<>(topic, "name", "zlikun"));
         // 指定分区ID，不能超过预分区数，本例：[0, 1)
         future = kafkaTemplate.send(topic, 0, "age", "180");
+        // sendDefault只是对send方法的简单封装，向defaultTopic发送消息
         future = kafkaTemplate.sendDefault("apache");
         future = kafkaTemplate.sendDefault("language", "java");
         future = kafkaTemplate.sendDefault(0, "gender", "male");
-        future = kafkaTemplate.sendDefault(0, System.currentTimeMillis(), "title", "architect");
+        future = kafkaTemplate.sendDefault(0, 1534918655678L, "title", "architect");
 
+        // 打印最后一次发送返回的信息
         SendResult<String, String> result = future.get();
         RecordMetadata metadata = result.getRecordMetadata();
+        // topic = kafka-spring-logs, timestamp = 1534918655678, partition = 0, offset = 4
         log.info("topic = {}, timestamp = {}, partition = {}, offset = {}",
                 metadata.topic(),
                 metadata.timestamp(),
@@ -78,6 +69,7 @@ public class KafkaTemplateTest extends TestBase {
 
     /**
      * 通过消息头指定Topic
+     *
      * @throws ExecutionException
      * @throws InterruptedException
      */
@@ -87,7 +79,7 @@ public class KafkaTemplateTest extends TestBase {
         Map<String, Object> headers = new HashMap<>();
         headers.put(KafkaHeaders.TOPIC, topic);
 
-        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(new GenericMessage<>("Hello kafka !" ,headers));
+        ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(new GenericMessage<>("Hello kafka !", headers));
 
         SendResult<String, String> result = future.get();
         RecordMetadata metadata = result.getRecordMetadata();
