@@ -1,8 +1,10 @@
 package com.zlikun.hadoop.conf;
 
+import com.zlikun.hadoop.util.ExternalConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -34,16 +36,56 @@ import java.util.Map;
 @EnableKafka
 public class AppConfigure {
 
-    public static final String SERVERS = "kafka.zlikun.com:9092";
-    public static final String DEFAULT_TOPIC = "logs";
-    public static final String DEFAULT_GROUP = "user";
+    public static final String SERVERS = ExternalConfigUtil.getString("bootstrap.servers");
+    public static final String DEFAULT_TOPIC = "kafka-spring-logs";
+    public static final String DEFAULT_GROUP = "kafka-spring";
+
+    /**
+     * 配置Admin管理Kafka
+     * https://docs.spring.io/spring-kafka/reference/htmlsingle/#_configuring_topics
+     *
+     * @return
+     */
+    @Bean
+    public KafkaAdmin kafkaAdmin() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
+        return new KafkaAdmin(config);
+    }
+
+    /**
+     * 配置Admin客户端，可以用来手动维护Topic
+     *
+     * @return
+     */
+    @Bean(destroyMethod = "close")
+    public AdminClient adminClient(KafkaAdmin admin) {
+        return AdminClient.create(admin.getConfig());
+    }
+
+    /**
+     * 也可以通过这种方式自动生成Topic（如果没有就生成）
+     *
+     * @return
+     */
+    @Bean
+    public NewTopic topicM() {
+        return new NewTopic("m", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic topicN() {
+        return new NewTopic("n", 1, (short) 2);
+    }
+
 
     /**
      * 配置消费容器实例
      *
      * @return
      */
-    @Bean @Primary
+    @Bean
+    @Primary
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
@@ -70,6 +112,7 @@ public class AppConfigure {
 
     /**
      * 批量消费
+     *
      * @return
      */
     @Bean
@@ -130,22 +173,5 @@ public class AppConfigure {
         return template;
     }
 
-    /**
-     * 管理Kafka
-     * https://docs.spring.io/spring-kafka/reference/htmlsingle/#_configuring_topics
-     *
-     * @return
-     */
-    @Bean
-    public KafkaAdmin kafkaAdmin() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
-        return new KafkaAdmin(config);
-    }
-
-    @Bean(destroyMethod = "close")
-    public AdminClient adminClient() {
-        return AdminClient.create(kafkaAdmin().getConfig());
-    }
 
 }
