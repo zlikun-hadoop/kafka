@@ -24,11 +24,12 @@ public class TransactionTest {
     private KafkaTemplate<String, String> template;
 
     @Test
-    public void test() {
+    public void transaction() {
 
-        boolean result = template.executeInTransaction(t -> {
-            t.sendDefault("name",  "zlikun");
-            t.sendDefault("age",  "120");
+        // 将多次发送逻辑放在一个事务中
+        boolean result = template.executeInTransaction(operations -> {
+            operations.sendDefault("name", "zlikun");
+            operations.sendDefault("age", "120");
             return true;
         });
         assertTrue(result);

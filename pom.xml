@@ -15,6 +15,7 @@
         <module>kafka-avro</module>
         <module>kafka-spring</module>
         <module>kafka-spring-stream</module>
+        <module>kafka-spring-reply</module>
     </modules>
 
     <properties>

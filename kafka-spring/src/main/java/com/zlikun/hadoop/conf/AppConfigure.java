@@ -15,10 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaAdmin;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.config.ContainerProperties;
 import org.springframework.kafka.support.ProducerListener;
 
@@ -78,14 +75,8 @@ public class AppConfigure {
         return new NewTopic("n", 1, (short) 2);
     }
 
-
-    /**
-     * 配置Kafka发送模板Bean，由于配置时需要指定序列化和反序列化器，所以实际对不同类型消息，该Bean并不能复用，需要配置多个
-     *
-     * @return
-     */
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
+    public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
         config.put(ProducerConfig.RETRIES_CONFIG, 0);
@@ -94,7 +85,17 @@ public class AppConfigure {
         config.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        KafkaTemplate template = new KafkaTemplate<>(new DefaultKafkaProducerFactory<String, String>(config));
+        return new DefaultKafkaProducerFactory<>(config);
+    }
+
+    /**
+     * 配置Kafka发送模板Bean，由于配置时需要指定序列化和反序列化器，所以实际对不同类型消息，该Bean并不能复用，需要配置多个
+     *
+     * @return
+     */
+    @Bean
+    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> producerFactory) {
+        KafkaTemplate template = new KafkaTemplate<>(producerFactory);
         // 设置默认Topic，可以在调用发送API时指定实际Topic
         template.setDefaultTopic(DEFAULT_TOPIC);
         // 非必要，仅供测试使用，打印消息发送日志
@@ -114,15 +115,8 @@ public class AppConfigure {
         return template;
     }
 
-
-    /**
-     * 配置消费容器实例
-     *
-     * @return
-     */
     @Bean
-    @Primary
-    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
+    public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, DEFAULT_GROUP);
@@ -131,9 +125,19 @@ public class AppConfigure {
         config.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 15000);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(config);
+    }
 
+    /**
+     * 配置消费容器实例
+     *
+     * @return
+     */
+    @Bean
+    @Primary
+    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(ConsumerFactory<String, String> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(config));
+        factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(3);
 //        factory.setBatchListener(true);
 
@@ -152,18 +156,9 @@ public class AppConfigure {
      * @return
      */
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> batchKafkaListenerContainerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVERS);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, DEFAULT_GROUP);
-        config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-        config.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 100);
-        config.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 15000);
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-
+    public ConcurrentKafkaListenerContainerFactory<String, String> batchKafkaListenerContainerFactory(ConsumerFactory<String, String> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(config));
+        factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(3);
         factory.setBatchListener(true);
 

@@ -15,6 +15,7 @@ import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 /**
+ * 使用异步回调实现异步发送消息
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018-04-03 13:11
  */
@@ -27,9 +28,11 @@ public class FutureCallbackTest {
     private KafkaTemplate<String, String> template;
 
     @Test
-    public void test() {
+    public void callback() {
 
-        ListenableFuture<SendResult<String, String>> future = template.send(AppConfigure.DEFAULT_TOPIC, "name", "zlikun");
+        // 执行发送（异步，此时并未真正发送）
+        ListenableFuture<SendResult<String, String>> future = template.sendDefault("name", "zlikun");
+        // 注册回调函数
         future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -39,11 +42,11 @@ public class FutureCallbackTest {
             @Override
             public void onSuccess(SendResult<String, String> result) {
                 ProducerRecord<String, String> record = result.getProducerRecord();
-                // topic = logs, key = name, value = zlikun, timestamp = null, partition = null
+                // topic = kafka-spring-logs, key = name, value = zlikun, timestamp = null, partition = null
                 log.info("topic = {}, key = {}, value = {}, timestamp = {}, partition = {}",
                         record.topic(), record.key(), record.value(), record.timestamp(), record.partition());
                 RecordMetadata metadata = result.getRecordMetadata();
-                // topic = logs, timestamp = 1522732897303, partition = 0, offset = 103
+                // topic = kafka-spring-logs, timestamp = 1534920840738, partition = 1, offset = 18
                 log.info("topic = {}, timestamp = {}, partition = {}, offset = {}",
                         metadata.topic(),
                         metadata.timestamp(),

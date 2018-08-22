@@ -10,7 +10,7 @@ import org.springframework.kafka.core.KafkaTemplate;
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018-04-02 16:24
  */
-public class KafkaBootstrap {
+public class KafkaBootstrapApplication {
 
     public static void main(String[] args) throws InterruptedException {
 
